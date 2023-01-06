@@ -1,26 +1,11 @@
-# importing required modules
-import PyPDF2
-
-# creating a pdf file object
-pdfFileObj = open('jacatra.pdf', 'rb')
-
-# creating a pdf reader object
-pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-
-# printing number of pages in pdf file
-print(pdfReader.numPages)
-
-# creating a page object
-pageObj = pdfReader.getPage(6)
-
-# extracting text from page
-print(pageObj.extractText())
-
-# closing the pdf file object
-pdfFileObj.close()
-
+from PIL import ImageGrab, Image
 import cv2
 import pytesseract
+
+img = ImageGrab.grabclipboard()
+
+img.save('pil.jpg')
+
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
@@ -28,7 +13,8 @@ def ocr_core(img):
     text = pytesseract.image_to_string(img)
     return text
 
-img = cv2.imread('image.jpg')
+
+img = cv2.imread('pil.jpg')
 
 def get_grayscale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
