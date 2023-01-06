@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 from imageOCR.clipboardImage import clipboardImageFunc
+from deepLTranslate import translateFunc
 
 # ----------- Create the 3 layouts this Window will display -----------
 layoutMain = [[sg.Text('This is the main menu')],
@@ -11,7 +12,8 @@ imageMenuLayout = [[sg.Text('This is the image menu')],
             [sg.Button('Image Clipboard')],
             [sg.Button('Image Import')]]
 
-outputTLLayout = [[sg.Text("Output: ")], [sg.Text("", size=(0, 1), key='imageClipboardOutput')]]
+outputTLLayout = [[sg.Text("Input: ")], [sg.Text("", key='imageClipboardInput')],
+                  [sg.Text("Output: ")],[sg.Text("", key='imageClipboardOutput')]]
 
 layout1 = [[sg.Text('This is layout 1 - It is all Checkboxes')],
            [sg.Button('buttona')]]
@@ -51,10 +53,14 @@ while True:
         window[f'outputMenu'].update(visible=True)
         currentWindow = "outputMenu"
         name = clipboardImageFunc()
-        window[f'imageClipboardOutput'].update(value=name)
+        hasilTranslate = translateFunc(name)
+        print(name)
+        window[f'imageClipboardInput'].update(value=name)
+        window[f'imageClipboardOutput'].update(value=hasilTranslate)
 
     else:
         window[f'-COL{layout}-'].update(visible=False)
         layout = int(event)
-        window[f'-COL{layout}-'].update(visible=True)    
+        window[f'-COL{layout}-'].update(visible=True)   
+         
 window.close()

@@ -1,8 +1,13 @@
 import deepl
 from authKey import auth_key
 
- # Replace with your key
-translator = deepl.Translator(auth_key)
+# Replace with your key
+#translator = deepl.Translator(auth_key)
 
-result = translator.translate_text("Halo, Dunia!", target_lang="EN-US")
-print(result.text)
+#result = translator.translate_text("Halo, Dunia!", target_lang="EN-US")
+#print(result.text)
+
+def translateFunc(input):
+    tambahan = "hasil"
+    hasil = input + tambahan
+    return hasil
