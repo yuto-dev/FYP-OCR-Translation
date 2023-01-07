@@ -1,7 +1,11 @@
 import PySimpleGUI as sg
 from imageOCR.clipboardImage import clipboardImageFunc
 from imageOCR.importImage import importImageFunc
+from pdfReader.reader import pdfReaderFunc
 from deepLTranslate import translateFunc
+
+currentWindow = "mainMenu"
+currentPage = 1
 
 # ----------- Create the 3 layouts this Window will display -----------
 layoutMain = [[sg.Text('This is the main menu')],
@@ -16,23 +20,31 @@ imageMenuLayout = [[sg.Text('This is the image menu')],
 outputTLLayout = [[sg.Text("Input: ")], [sg.Text("", key='imageInput')],
                   [sg.Text("Output: ")],[sg.Text("", key='imageOutput')]]
 
-layout1 = [[sg.Text('This is layout 1 - It is all Checkboxes')],
-           [sg.Button('buttona')]]
+pdfMenuLayout = [[sg.Text('This is the PDF menu')],
+            [sg.Button('PDF OCR')],
+            [sg.Button('PDF Reader')]]
 
-layout2 = [[sg.Text('This is layout 2')],
-           [sg.Input(key='-IN-')],
-           [sg.Input(key='-IN2-')]]
+pdfReaderLayout = [[sg.Text('This is the input:')],
+                   [sg.Multiline("", size=(100, 5), key='pdfReaderInputBox')],
+                   [sg.Text('This is the output:')],
+                   [sg.Multiline("", size=(100, 5), key='pdfReaderOutputBox')],
+                   [sg.Text('Page number: '), sg.Text('{currentPage}', key='currentPageText') ],
+                   [sg.Button('Reader Previous Page')],
+                   [sg.Button('Reader Next Page')]]  # identify the multiline via key option
 
-layout3 = [[sg.Text('This is layout 3 - It is all Radio Buttons')],
-           *[[sg.R(f'Radio {i}', 1)] for i in range(8)]]
+
 
 # ----------- Create actual layout using Columns and a row of Buttons
-layout = [[sg.Column(layoutMain, key='mainMenu'), sg.Column(imageMenuLayout, visible=False, key='imageMenu'), sg.Column(outputTLLayout, visible=False, key='outputMenu')],
+layout = [[sg.Column(layoutMain, key='mainMenu'), sg.Column(imageMenuLayout, visible=False, key='imageMenu'),
+ sg.Column(pdfMenuLayout, visible=False, key='pdfMenu'),
+ sg.Column(pdfReaderLayout, visible=False, key='pdfReaderMenu'),
+  sg.Column(outputTLLayout, visible=False, key='outputMenu')],
+
           [sg.Button('Back to Main Menu')],[sg.Button('Exit')]]
 
-window = sg.Window('Swapping the contents of a window', layout)
+window = sg.Window('Swapping the contents of a window', layout, size=(500, 500))
 
-currentWindow = "mainMenu"
+
 
 while True:
     event, values = window.read()
@@ -65,7 +77,49 @@ while True:
         translateInput = importImageFunc()
         translateResult = translateFunc(translateInput)
         window[f'imageInput'].update(value = translateInput)
-        window[f'imageOutput'].update(value = translateResult)    
+        window[f'imageOutput'].update(value = translateResult)  
+
+    elif event == 'PDF':
+        window[f'{currentWindow}'].update(visible=False)
+        window[f'pdfMenu'].update(visible=True)
+        currentWindow = "pdfMenu"  
+
+    elif event == 'PDF OCR':
+        window[f'{currentWindow}'].update(visible=False)
+        window[f'pdfMenu'].update(visible=True)
+        currentWindow = "pdfOCRMenu"     
+
+    elif event == 'PDF Reader':
+        window[f'{currentWindow}'].update(visible=False)
+        window[f'pdfReaderMenu'].update(visible=True)
+        currentWindow = "pdfReaderMenu"       
+        translateInput = pdfReaderFunc(currentPage)
+        translateResult = translateFunc(translateInput)
+        window[f'pdfReaderInputBox'].update(value = translateInput)
+        window[f'pdfReaderOutputBox'].update(value = translateResult)  
+
+    elif event == 'Reader Next Page':
+        window[f'{currentWindow}'].update(visible=False)
+        window[f'pdfReaderMenu'].update(visible=True)
+        currentWindow = "pdfReaderMenu"  
+        currentPage = currentPage + 1     
+        translateInput = pdfReaderFunc(currentPage)
+        translateResult = translateFunc(translateInput)
+        window[f'pdfReaderInputBox'].update(value = translateInput)
+        window[f'pdfReaderOutputBox'].update(value = translateResult)
+        window[f'currentPageText'].update(value = currentPage)     
+
+    elif event == 'Reader Previous Page':
+        window[f'{currentWindow}'].update(visible=False)
+        window[f'pdfReaderMenu'].update(visible=True)
+        currentWindow = "pdfReaderMenu"  
+        currentPage = currentPage - 1     
+        translateInput = pdfReaderFunc(currentPage)
+        translateResult = translateFunc(translateInput)
+        window[f'pdfReaderInputBox'].update(value = translateInput)
+        window[f'pdfReaderOutputBox'].update(value = translateResult)
+        window[f'currentPageText'].update(value = currentPage)          
+         
 
     else:
         window[f'-COL{layout}-'].update(visible=False)
