@@ -9,8 +9,7 @@ def ocr_core(input):
         return text
 
 def clipboardImageFunc():
-      
-    
+          
     if os.path.exists('pil.jpg'):
         os.remove('pil.jpg')
 
