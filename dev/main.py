@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+import os
 from imageOCR.clipboardImage import clipboardImageFunc
 from imageOCR.importImage import importImageFunc
 from pdfCapture.pdfOCR import pdfOCRFunc
@@ -23,16 +24,16 @@ outputTLLayout = [[sg.Text("Input: ")], [sg.Text("", key='imageInput')],
                   [sg.Text("Output: ")],[sg.Text("", key='imageOutput')]]
 
 pdfMenuLayout = [[sg.Text('This is the PDF menu')],
-            [sg.Button('PDF OCR')],
-            [sg.Button('PDF Reader')]]
+                 [sg.Button('PDF OCR')],
+                 [sg.Button('PDF Reader')]]
 
 pdfOCRLayout = [[sg.Text('This is the input:')],
-                   [sg.Multiline("", size=(100, 5), key='pdfOCRInputBox')],
-                   [sg.Text('This is the output:')],
-                   [sg.Multiline("", size=(100, 5), key='pdfOCROutputBox')],
-                   [sg.Text('Page number: '), sg.Text('{currentPage}', key='currentPageText') ],
-                   [sg.Button('OCR Previous Page')],
-                   [sg.Button('OCR Next Page')]] 
+                [sg.Multiline("", size=(100, 5), key='pdfOCRInputBox')],
+                [sg.Text('This is the output:')],
+                [sg.Multiline("", size=(100, 5), key='pdfOCROutputBox')],
+                [sg.Text('Page number: '), sg.Text('{currentPage}', key='currentPageText') ],
+                [sg.Button('OCR Previous Page')],
+                [sg.Button('OCR Next Page')]] 
 
 pdfReaderLayout = [[sg.Text('This is the input:')],
                    [sg.Multiline("", size=(100, 5), key='pdfReaderInputBox')],
@@ -101,13 +102,16 @@ while True:
         window[f'{currentWindow}'].update(visible=False)
         window[f'pdfOCRMenu'].update(visible=True)
         currentWindow = "pdfOCRMenu"  
-        currentPage = 6
+        currentPage = 1
         print(currentPage)
         pdfCaptureFunc(currentPage)
         translateInput = pdfOCRFunc(currentPage)
         translateResult = translateFunc(translateInput)
         window[f'pdfOCRInputBox'].update(value = translateInput)
         window[f'pdfOCROutputBox'].update(value = translateResult)    
+
+        if os.path.exists('page-%i.png' % currentPage):
+            os.remove('page-%i.png' % currentPage)
 
     elif event == 'OCR Next Page':
         window[f'{currentWindow}'].update(visible=False)
@@ -119,7 +123,10 @@ while True:
         translateResult = translateFunc(translateInput)
         window[f'pdfOCRInputBox'].update(value = translateInput)
         window[f'pdfOCROutputBox'].update(value = translateResult)
-        window[f'currentPageText'].update(value = currentPage)    
+        window[f'currentPageText'].update(value = currentPage)  
+
+        if os.path.exists('page-%i.png' % currentPage):
+            os.remove('page-%i.png' % currentPage)  
 
     elif event == 'OCR Previous Page':
         window[f'{currentWindow}'].update(visible=False)
@@ -131,8 +138,11 @@ while True:
         translateResult = translateFunc(translateInput)
         window[f'pdfOCRInputBox'].update(value = translateInput)
         window[f'pdfOCROutputBox'].update(value = translateResult)
-        window[f'currentPageText'].update(value = currentPage)       
+        window[f'currentPageText'].update(value = currentPage)  
 
+        if os.path.exists('page-%i.png' % currentPage):
+            os.remove('page-%i.png' % currentPage)
+        
     elif event == 'PDF Reader':
         window[f'{currentWindow}'].update(visible=False)
         window[f'pdfReaderMenu'].update(visible=True)
