@@ -53,21 +53,19 @@ while True:
         window[f'{currentWindow}'].update(visible=False)
         window[f'outputMenu'].update(visible=True)
         currentWindow = "outputMenu"
-        name = clipboardImageFunc()
-        hasilTranslate = translateFunc(name)
-        print(name)
-        window[f'imageInput'].update(value=name)
-        window[f'imageOutput'].update(value=hasilTranslate)
+        translateInput = clipboardImageFunc()
+        translateResult = translateFunc(translateInput)
+        window[f'imageInput'].update(value = translateInput)
+        window[f'imageOutput'].update(value = translateResult)
 
     elif event == 'Image Import':
         window[f'{currentWindow}'].update(visible=False)
         window[f'outputMenu'].update(visible=True)
         currentWindow = "outputMenu"
-        name = importImageFunc()
-        hasilTranslate = translateFunc(name)
-        print(name)
-        window[f'imageInput'].update(value=name)
-        window[f'imageOutput'].update(value=hasilTranslate)    
+        translateInput = importImageFunc()
+        translateResult = translateFunc(translateInput)
+        window[f'imageInput'].update(value = translateInput)
+        window[f'imageOutput'].update(value = translateResult)    
 
     else:
         window[f'-COL{layout}-'].update(visible=False)
