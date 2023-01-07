@@ -1,6 +1,8 @@
 import PySimpleGUI as sg
 from imageOCR.clipboardImage import clipboardImageFunc
 from imageOCR.importImage import importImageFunc
+from pdfCapture.pdfOCR import pdfOCRFunc
+from pdfCapture.pdfCapture import pdfCaptureFunc  
 from pdfReader.reader import pdfReaderFunc
 from deepLTranslate import translateFunc
 
@@ -24,6 +26,14 @@ pdfMenuLayout = [[sg.Text('This is the PDF menu')],
             [sg.Button('PDF OCR')],
             [sg.Button('PDF Reader')]]
 
+pdfOCRLayout = [[sg.Text('This is the input:')],
+                   [sg.Multiline("", size=(100, 5), key='pdfOCRInputBox')],
+                   [sg.Text('This is the output:')],
+                   [sg.Multiline("", size=(100, 5), key='pdfOCROutputBox')],
+                   [sg.Text('Page number: '), sg.Text('{currentPage}', key='currentPageText') ],
+                   [sg.Button('OCR Previous Page')],
+                   [sg.Button('OCR Next Page')]] 
+
 pdfReaderLayout = [[sg.Text('This is the input:')],
                    [sg.Multiline("", size=(100, 5), key='pdfReaderInputBox')],
                    [sg.Text('This is the output:')],
@@ -34,9 +44,12 @@ pdfReaderLayout = [[sg.Text('This is the input:')],
 
 
 
+
 # ----------- Create actual layout using Columns and a row of Buttons
-layout = [[sg.Column(layoutMain, key='mainMenu'), sg.Column(imageMenuLayout, visible=False, key='imageMenu'),
+layout = [[sg.Column(layoutMain, key='mainMenu'),
+ sg.Column(imageMenuLayout, visible=False, key='imageMenu'),
  sg.Column(pdfMenuLayout, visible=False, key='pdfMenu'),
+ sg.Column(pdfOCRLayout, visible=False, key='pdfOCRMenu'),
  sg.Column(pdfReaderLayout, visible=False, key='pdfReaderMenu'),
   sg.Column(outputTLLayout, visible=False, key='outputMenu')],
 
@@ -86,8 +99,39 @@ while True:
 
     elif event == 'PDF OCR':
         window[f'{currentWindow}'].update(visible=False)
-        window[f'pdfMenu'].update(visible=True)
-        currentWindow = "pdfOCRMenu"     
+        window[f'pdfOCRMenu'].update(visible=True)
+        currentWindow = "pdfOCRMenu"  
+        currentPage = 6
+        print(currentPage)
+        pdfCaptureFunc(currentPage)
+        translateInput = pdfOCRFunc(currentPage)
+        translateResult = translateFunc(translateInput)
+        window[f'pdfOCRInputBox'].update(value = translateInput)
+        window[f'pdfOCROutputBox'].update(value = translateResult)    
+
+    elif event == 'OCR Next Page':
+        window[f'{currentWindow}'].update(visible=False)
+        window[f'pdfOCRMenu'].update(visible=True)
+        currentWindow = "pdfOCRMenu"  
+        currentPage = currentPage + 1     
+        pdfCaptureFunc(currentPage)
+        translateInput = pdfOCRFunc(currentPage)
+        translateResult = translateFunc(translateInput)
+        window[f'pdfOCRInputBox'].update(value = translateInput)
+        window[f'pdfOCROutputBox'].update(value = translateResult)
+        window[f'currentPageText'].update(value = currentPage)    
+
+    elif event == 'OCR Previous Page':
+        window[f'{currentWindow}'].update(visible=False)
+        window[f'pdfOCRMenu'].update(visible=True)
+        currentWindow = "pdfOCRMenu"  
+        currentPage = currentPage - 1     
+        pdfCaptureFunc(currentPage)
+        translateInput = pdfOCRFunc(currentPage)
+        translateResult = translateFunc(translateInput)
+        window[f'pdfOCRInputBox'].update(value = translateInput)
+        window[f'pdfOCROutputBox'].update(value = translateResult)
+        window[f'currentPageText'].update(value = currentPage)       
 
     elif event == 'PDF Reader':
         window[f'{currentWindow}'].update(visible=False)
