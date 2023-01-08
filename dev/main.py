@@ -2,10 +2,13 @@ import PySimpleGUI as sg
 import os
 from imageOCR.clipboardImage import clipboardImageFunc
 from imageOCR.importImage import importImageFunc
+#from videoOCR.windowcapture import WindowCapture
+from videoOCR.videoOCR import videoOCRFunc
 from pdfCapture.pdfOCR import pdfOCRFunc
 from pdfCapture.pdfCapture import pdfCaptureFunc  
 from pdfReader.reader import pdfReaderFunc
 from deepLTranslate import translateFunc
+import time
 
 currentWindow = "mainMenu"
 currentPage = 1
@@ -22,6 +25,17 @@ imageMenuLayout = [[sg.Text('This is the image menu')],
 
 outputTLLayout = [[sg.Text("Input: ")], [sg.Text("", key='imageInput')],
                   [sg.Text("Output: ")],[sg.Text("", key='imageOutput')]]
+
+videoOCRMenuLayout = [[sg.Text("Window name: "), sg.Input(key="windowNameText")],
+                      [sg.Text("Interval (in seconds): "), sg.Input(key="intervalText")],
+                      [sg.Text("Duration (in seconds): "), sg.Input(key="durationText")],
+                      [sg.Button("Start Video Capture")]]
+
+videoOCRResultLayout = [[sg.Text('This is the input:')],
+                        [sg.Multiline("", size=(100, 5), key='videoOCRInputBox')],
+                        [sg.Text('This is the output:')],
+                        [sg.Multiline("", size=(100, 5), key='videoOCROutputBox')]]
+                         
 
 pdfMenuLayout = [[sg.Text('This is the PDF menu')],
                  [sg.Button('PDF OCR')],
@@ -48,11 +62,13 @@ pdfReaderLayout = [[sg.Text('This is the input:')],
 
 # ----------- Create actual layout using Columns and a row of Buttons
 layout = [[sg.Column(layoutMain, key='mainMenu'),
- sg.Column(imageMenuLayout, visible=False, key='imageMenu'),
- sg.Column(pdfMenuLayout, visible=False, key='pdfMenu'),
- sg.Column(pdfOCRLayout, visible=False, key='pdfOCRMenu'),
- sg.Column(pdfReaderLayout, visible=False, key='pdfReaderMenu'),
-  sg.Column(outputTLLayout, visible=False, key='outputMenu')],
+           sg.Column(imageMenuLayout, visible=False, key='imageMenu'),
+           sg.Column(videoOCRMenuLayout, visible=False, key='videoOCRMenu'),
+           sg.Column(videoOCRResultLayout, visible=False, key='videoOCRResultMenu'),
+           sg.Column(pdfMenuLayout, visible=False, key='pdfMenu'),
+           sg.Column(pdfOCRLayout, visible=False, key='pdfOCRMenu'),
+           sg.Column(pdfReaderLayout, visible=False, key='pdfReaderMenu'),
+           sg.Column(outputTLLayout, visible=False, key='outputMenu')],
 
           [sg.Button('Back to Main Menu')],[sg.Button('Exit')]]
 
@@ -92,6 +108,34 @@ while True:
         translateResult = translateFunc(translateInput)
         window[f'imageInput'].update(value = translateInput)
         window[f'imageOutput'].update(value = translateResult)  
+
+    elif event == 'Video':
+        window[f'{currentWindow}'].update(visible=False)
+        window[f'videoOCRMenu'].update(visible=True)
+        currentWindow = "videoOCRMenu"
+
+    elif event == 'Start Video Capture':
+        window[f'{currentWindow}'].update(visible=False)
+        window[f'videoOCRResultMenu'].update(visible=True)
+        currentWindow = "videoOCRResultMenu"  
+
+        windowName = 'System Properties'
+        interval = values['intervalText']
+        print(interval)
+        amount = 60
+        amountDalam = 5
+        translateInput = videoOCRFunc(windowName)
+        translateResult = translateFunc(translateInput)
+        for x in range(amount):    
+            
+            window[f'videoOCRInputBox'].update(value = translateInput)
+            window[f'videoOCROutputBox'].update(value = translateResult)  
+            for y in range(amountDalam):
+                translateInput = videoOCRFunc(windowName)
+                translateResult = translateFunc(translateInput)
+            #time.sleep(int(interval)) 
+            print(time.time())
+            print(x)   
 
     elif event == 'PDF':
         window[f'{currentWindow}'].update(visible=False)
