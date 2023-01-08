@@ -1,0 +1,11 @@
+deepl==1.11.0
+fitz==0.0.1.dev2
+numpy==1.21.5
+opencv_python==4.6.0.66
+Pillow==9.4.0
+PyMuPDF==1.21.0
+PyPDF2==3.0.1
+PySimpleGUI==4.60.4
+pytesseract==0.3.10
+pywin32==302
+win32gui==221.6

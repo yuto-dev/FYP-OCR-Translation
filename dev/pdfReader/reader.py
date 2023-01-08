@@ -9,9 +9,9 @@ def ocr_core(img):
     text = pytesseract.image_to_string(img)
     return text
 
-def pdfReaderFunc(pageNum):
+def pdfReaderFunc(pdfFile, pageNum):
 
-    pdfFileObj = open('jacatra.pdf', 'rb')
+    pdfFileObj = open(pdfFile, 'rb')
     pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
     pageObj = pdfReader.getPage(pageNum)
     pdfText = (pageObj.extractText())

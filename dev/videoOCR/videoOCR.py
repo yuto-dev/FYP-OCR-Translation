@@ -82,22 +82,7 @@ class WindowCapture:
 
         return img
 
-    # find the name of the window you're interested in.
-    # once you have it, update window_capture()
-    # https://stackoverflow.com/questions/55547940/how-to-get-a-list-of-the-name-of-every-open-window
-    def list_window_names(self):
-        def winEnumHandler(hwnd, ctx):
-            if win32gui.IsWindowVisible(hwnd):
-                print(hex(hwnd), win32gui.GetWindowText(hwnd))
-        win32gui.EnumWindows(winEnumHandler, None)
-
-    # translate a pixel position on a screenshot image to a pixel position on the screen.
-    # pos = (x, y)
-    # WARNING: if you move the window being captured after execution is started, this will
-    # return incorrect coordinates, because the window position is only calculated in
-    # the __init__ constructor.
-    def get_screen_position(self, pos):
-        return (pos[0] + self.offset_x, pos[1] + self.offset_y)
+   
 
 
 def ocr_core(input):
@@ -111,8 +96,7 @@ def videoOCRFunc(window):
     #loop_time = time()
            # get an updated image of the game
     screenshot = wincap.get_screenshot()
-    cv.imshow('Computer Vision', screenshot)
-       # debug the loop rate
+           # debug the loop rate
        #print('FPS {}'.format(1 / (time() - loop_time)))
     return ocr_core(screenshot)
        #loop_time = time()

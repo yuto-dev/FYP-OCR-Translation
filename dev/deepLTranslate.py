@@ -8,6 +8,9 @@ from authKey import auth_key
 #print(result.text)
 
 def translateFunc(input):
-    tambahan = "hasil"
-    hasil = input + tambahan
-    return hasil
+    translator = deepl.Translator(auth_key)
+
+    result = translator.translate_text(input, target_lang="EN-US")
+    #tambahan = "hasil"
+    #hasil = input + tambahan
+    return result
